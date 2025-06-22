@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - LMS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <style>
+    .register-card { max-width: 400px; margin: 40px auto; }
+    .input-field .material-icons { cursor: pointer; }
+    .center-logo { margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <nav class="nav-wrapper blue">
+    <div class="container">
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="dashboard.html"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        <li><a href="books.html"><i class="material-icons left">menu_book</i>Books</a></li>
+        <li><a href="users.html"><i class="material-icons left">group</i>Users</a></li>
+        <li><a href="issue_return.html"><i class="material-icons left">assignment_returned</i>Issue/Return</a></li>
+        <li><a href="fines.html"><i class="material-icons left">attach_money</i>Fines</a></li>
+        <li><a href="reservations.html"><i class="material-icons left">event_available</i>Reservations</a></li>
+        <li><a href="ebooks.html"><i class="material-icons left">picture_as_pdf</i>E-Books</a></li>
+        <li><a href="profile.html"><i class="material-icons left">person</i>Profile</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="center-align center-logo">
+      <i class="material-icons large blue-text">person_add</i>
+    </div>
+    <div class="card register-card z-depth-2">
+      <div class="card-content">
+        <span class="card-title center-align">Register</span>
+        <form id="registerForm">
+          <div class="input-field">
+            <input type="email" id="email" placeholder="Email" required class="tooltipped" data-tooltip="Enter your email address">
+            <label for="email">Email <i class="material-icons tiny tooltipped" data-tooltip="Your email">help_outline</i></label>
+            <span class="helper-text">E.g., user@example.com</span>
+          </div>
+          <div class="input-field" style="position:relative;">
+            <input type="password" id="password" placeholder="Password" required class="tooltipped" data-tooltip="Create a password">
+            <label for="password">Password <i class="material-icons tiny tooltipped" data-tooltip="Your password">help_outline</i></label>
+            <span class="helper-text">Password must be at least 6 characters.</span>
+            <i class="material-icons" id="togglePassword" style="position:absolute;top:0;right:8px;">visibility</i>
+          </div>
+          <div class="input-field">
+            <select id="role" required class="tooltipped" data-tooltip="Select your role">
+              <option value="" disabled selected>Choose your role</option>
+              <option value="student">Student</option>
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+            <label for="role">Role <i class="material-icons tiny tooltipped" data-tooltip="Your role">help_outline</i></label>
+            <span class="helper-text">Choose your role in the system.</span>
+          </div>
+          <button type="submit" class="btn waves-effect waves-light blue btn-block tooltipped" data-tooltip="Register your account" style="width:100%;margin-bottom:10px;">
+            <span id="registerBtnText">Register</span>
+            <div id="registerSpinner" class="preloader-wrapper small active" style="display:none;vertical-align:middle;">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left"><div class="circle"></div></div>
+                <div class="gap-patch"><div class="circle"></div></div>
+                <div class="circle-clipper right"><div class="circle"></div></div>
+              </div>
+            </div>
+          </button>
+        </form>
+        <div class="center-align" style="margin-top:10px;">
+          <a href="login.html">Already have an account? Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Floating Help Button -->
+  <div class="fixed-action-btn">
+    <a class="btn-floating btn-large yellow darken-2 tooltipped" data-tooltip="Help & FAQ" href="#helpModal">
+      <i class="material-icons">help_outline</i>
+    </a>
+  </div>
+  <!-- Help Modal Structure -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <h5>Register Help & FAQ</h5>
+      <ul class="collection">
+        <li class="collection-item">Enter your email, create a password, and select your role to register.</li>
+        <li class="collection-item">If you are a student, select "Student" as your role.</li>
+        <li class="collection-item">Hover over any <i class="material-icons tiny">help_outline</i> icon for more info.</li>
+        <li class="collection-item">For more help, contact your librarian or admin.</li>
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">Close</a>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module">
+    import { register } from './js/auth.js';
+    import { highlightActiveNav } from './js/utils.js';
+    document.addEventListener('DOMContentLoaded', function() {
+      var modals = document.querySelectorAll('.modal');
+      M.Modal.init(modals);
+      var tooltipped = document.querySelectorAll('.tooltipped');
+      M.Tooltip.init(tooltipped);
+      var selects = document.querySelectorAll('select');
+      M.FormSelect.init(selects);
+      highlightActiveNav();
+    });
+    // Show/hide password toggle
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword.onclick = function() {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassword.textContent = 'visibility_off';
+      } else {
+        passwordInput.type = 'password';
+        togglePassword.textContent = 'visibility';
+      }
+    };
+    // Register form submit with spinner
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      document.getElementById('registerBtnText').style.display = 'none';
+      document.getElementById('registerSpinner').style.display = 'inline-block';
+      try {
+        await register(email, password, role);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        // Error handled by auth.js toast
+      } finally {
+        document.getElementById('registerBtnText').style.display = '';
+        document.getElementById('registerSpinner').style.display = 'none';
+      }
+    });
+  </script>
+  <script src="js/navHighlight.js"></script>
+</body>
+</html> 

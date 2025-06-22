@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - LMS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <style>
+    .login-card { max-width: 400px; margin: 40px auto; }
+    .input-field .material-icons { cursor: pointer; }
+    .center-logo { margin-top: 32px; }
+    /* Restore classic nav bar for login only */
+    #nav-mobile.right.hide-on-med-and-down {
+      justify-content: flex-end;
+      gap: 16px;
+    }
+    #nav-mobile.right.hide-on-med-and-down li a {
+      font-size: 1.08rem;
+      padding: 0 18px;
+      min-width: unset;
+      max-width: unset;
+      flex-shrink: unset;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+ 
+  <div class="container">
+    <div class="center-align center-logo">
+      <i class="material-icons large blue-text">account_circle</i>
+    </div>
+    <div class="card login-card z-depth-2">
+      <div class="card-content">
+        <span class="card-title center-align">Login</span>
+        <form id="loginForm">
+          <div class="input-field">
+            <input type="email" id="email" placeholder="Email" required class="tooltipped" data-tooltip="Enter your email address">
+            <label for="email">Email <i class="material-icons tiny tooltipped" data-tooltip="Your email">help_outline</i></label>
+            <span class="helper-text">E.g., user@example.com</span>
+          </div>
+          <div class="input-field" style="position:relative;">
+            <input type="password" id="password" placeholder="Password" required class="tooltipped" data-tooltip="Enter your password">
+            <label for="password">Password <i class="material-icons tiny tooltipped" data-tooltip="Your password">help_outline</i></label>
+            <span class="helper-text">Password is case-sensitive.</span>
+            <i class="material-icons" id="togglePassword" style="position:absolute;top:0;right:8px;">visibility</i>
+          </div>
+          <button type="submit" class="btn waves-effect waves-light blue btn-block tooltipped" data-tooltip="Login to your account" style="width:100%;margin-bottom:10px;">
+            <span id="loginBtnText">Login</span>
+            <div id="loginSpinner" class="preloader-wrapper small active" style="display:none;vertical-align:middle;">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left"><div class="circle"></div></div>
+                <div class="gap-patch"><div class="circle"></div></div>
+                <div class="circle-clipper right"><div class="circle"></div></div>
+              </div>
+            </div>
+          </button>
+        </form>
+        <div class="center-align" style="margin-top:10px;">
+          <a href="register.html">Don't have an account? Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Floating Help Button -->
+  <div class="fixed-action-btn">
+    <a class="btn-floating btn-large yellow darken-2 tooltipped" data-tooltip="Help & FAQ" href="#helpModal">
+      <i class="material-icons">help_outline</i>
+    </a>
+  </div>
+  <!-- Help Modal Structure -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <h5>Login Help & FAQ</h5>
+      <ul class="collection">
+        <li class="collection-item">Enter your registered email and password to log in.</li>
+        <li class="collection-item">If you forgot your password, contact your librarian or admin to reset it.</li>
+        <li class="collection-item">Hover over any <i class="material-icons tiny">help_outline</i> icon for more info.</li>
+        <li class="collection-item">For more help, contact your librarian or admin.</li>
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">Close</a>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module">
+    import { login } from './js/auth.js';
+    import { highlightActiveNav } from './js/utils.js';
+    document.addEventListener('DOMContentLoaded', function() {
+      var modals = document.querySelectorAll('.modal');
+      M.Modal.init(modals);
+      var tooltipped = document.querySelectorAll('.tooltipped');
+      M.Tooltip.init(tooltipped);
+    });
+    // Show/hide password toggle
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    togglePassword.onclick = function() {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassword.textContent = 'visibility_off';
+      } else {
+        passwordInput.type = 'password';
+        togglePassword.textContent = 'visibility';
+      }
+    };
+    // Login form submit with spinner
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      document.getElementById('loginBtnText').style.display = 'none';
+      document.getElementById('loginSpinner').style.display = 'inline-block';
+      try {
+        await login(email, password);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        // Error handled by auth.js toast
+      } finally {
+        document.getElementById('loginBtnText').style.display = '';
+        document.getElementById('loginSpinner').style.display = 'none';
+      }
+    });
+    highlightActiveNav();
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const navLinks = document.querySelectorAll('#nav-mobile a');
+      const current = window.location.pathname.split('/').pop();
+      navLinks.forEach(link => {
+        if(link.getAttribute('href') === current) {
+          link.parentElement.classList.add('active');
+        }
+      });
+    });
+  </script>
+  <script src="js/navHighlight.js"></script>
+</body>
+</html> 
